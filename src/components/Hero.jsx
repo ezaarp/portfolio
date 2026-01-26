@@ -71,7 +71,7 @@ export default function Hero() {
                     initial={{ opacity: 0, x: 0 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="w-full lg:w-[50%] ml-20 h-[800px] flex items-center"
+                    className="w-full lg:w-[50%] ml-0 lg:ml-20 h-[80vh] md:h-[600px] lg:h-[800px] flex items-center relative z-40"
                 >
                     <div className="w-full bg-[#0c0c0c]/90 backdrop-blur-md rounded-xl border border-dark-700 shadow-2xl font-mono text-sm md:text-base leading-relaxed relative overflow-hidden h-full flex flex-col">
 

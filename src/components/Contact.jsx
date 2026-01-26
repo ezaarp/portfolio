@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Mail, Github, Linkedin, Send } from 'lucide-react';
+import { Mail, Github, Linkedin, Send, Instagram } from 'lucide-react';
 import Marquee from './Marquee';
 
 export default function Contact() {
@@ -69,6 +69,14 @@ export default function Contact() {
                                 className="w-12 h-12 glass rounded-lg flex items-center justify-center hover:border-primary-500 hover:bg-primary-500/10 transition-all"
                             >
                                 <Linkedin size={24} />
+                            </a>
+                            <a
+                                href="https://www.instagram.com/ezaarp/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-12 h-12 glass rounded-lg flex items-center justify-center hover:border-primary-500 hover:bg-primary-500/10 transition-all"
+                            >
+                                <Instagram size={24} />
                             </a>
                         </div>
                     </motion.div>
