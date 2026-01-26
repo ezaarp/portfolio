@@ -1,4 +1,4 @@
-import lmsImg from '../assets/lms-laboratory.png';
+import lmsImg from '../assets/Lms-laboratory.png';
 import foodImg from '../assets/food-delivery.png';
 import secureAuditImg from '../assets/secure-audit.png';
 import cryptoImg from '../assets/crypto-live-market.png';
