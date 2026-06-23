@@ -1,4 +1,4 @@
-import { useState, useRef, lazy, Suspense, useMemo } from 'react';
+import { useState, useRef, lazy, Suspense, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { Github, ArrowUpRight, Lock, Orbit, List, X } from 'lucide-react';
 import { projects } from '../data/projects';
