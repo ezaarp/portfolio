@@ -165,8 +165,12 @@ function BigListItem({ p, onSelect, containerRef }) {
 function BigList({ onSelect }) {
     const containerRef = useRef(null);
     return (
-        <div ref={containerRef} className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth snap-y snap-mandatory flex flex-col items-center">
-            <div className="h-[45vh] shrink-0" />
+        <div 
+            ref={containerRef} 
+            className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth snap-y snap-mandatory flex flex-col items-center"
+            style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 100px, black calc(100% - 100px), transparent 100%)', maskImage: 'linear-gradient(to bottom, transparent 0px, black 100px, black calc(100% - 100px), transparent 100%)' }}
+        >
+            <div className="h-[50vh] shrink-0" />
             <div className="w-full max-w-frame mx-auto px-5 md:px-10 flex flex-col items-center gap-0">
                 {projects.map((p, i) => (
                     <motion.div 
@@ -256,27 +260,29 @@ export default function Projects() {
 
     // List / grid (scrolls internally within the view)
     return (
-        <section id="work" className="relative h-full overflow-hidden">
-            <div className="absolute top-20 md:top-24 inset-x-0 z-20 pointer-events-none">
+        <section id="work" className="relative h-full overflow-hidden flex flex-col pt-20 md:pt-24">
+            <div className="shrink-0 z-20 pointer-events-none">
                 <SharedHeader isList={true} />
             </div>
             <Toggle view={view} setView={setView} />
 
-            {view === 'spiral' && !canSpiral && (
-                <div className="absolute inset-0 pt-48 pb-10 overflow-y-auto max-w-frame mx-auto px-5 md:px-10">
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                        {projects.map((p, i) => (
-                            <motion.div key={p.id}
-                                initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: (i % 3) * 0.06, ease: EASE }}>
-                                <ProjectCard project={p} onSelect={setSelected} />
-                            </motion.div>
-                        ))}
+            <div className="flex-1 relative">
+                {view === 'spiral' && !canSpiral && (
+                    <div className="absolute inset-0 overflow-y-auto pb-10 max-w-frame mx-auto px-5 md:px-10">
+                        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                            {projects.map((p, i) => (
+                                <motion.div key={p.id}
+                                    initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, amount: 0.2 }} transition={{ duration: 0.5, delay: (i % 3) * 0.06, ease: EASE }}>
+                                    <ProjectCard project={p} onSelect={setSelected} />
+                                </motion.div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {view === 'list' && <BigList onSelect={setSelected} />}
+                {view === 'list' && <BigList onSelect={setSelected} />}
+            </div>
 
             <DetailModal project={selected} onClose={() => setSelected(null)} />
         </section>
