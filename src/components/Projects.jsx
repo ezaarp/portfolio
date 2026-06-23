@@ -164,6 +164,12 @@ function BigListItem({ p, onSelect, containerRef }) {
 
 function BigList({ onSelect }) {
     const containerRef = useRef(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     return (
         <div 
             ref={containerRef} 
@@ -171,7 +177,7 @@ function BigList({ onSelect }) {
         >
             <div className="h-[50vh] shrink-0" />
             <div className="w-full max-w-frame mx-auto px-5 md:px-10 flex flex-col items-center gap-0">
-                {projects.map((p, i) => (
+                {mounted && projects.map((p, i) => (
                     <motion.div 
                         key={p.id} 
                         className="snap-center w-full"
