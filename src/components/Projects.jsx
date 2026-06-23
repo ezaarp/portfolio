@@ -168,7 +168,6 @@ function BigList({ onSelect }) {
         <div 
             ref={containerRef} 
             className="absolute inset-0 overflow-y-auto no-scrollbar scroll-smooth snap-y snap-mandatory flex flex-col items-center"
-            style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent 0px, black 100px, black calc(100% - 100px), transparent 100%)', maskImage: 'linear-gradient(to bottom, transparent 0px, black 100px, black calc(100% - 100px), transparent 100%)' }}
         >
             <div className="h-[50vh] shrink-0" />
             <div className="w-full max-w-frame mx-auto px-5 md:px-10 flex flex-col items-center gap-0">
