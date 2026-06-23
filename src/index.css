@@ -2,32 +2,119 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-    .glass {
-        @apply bg-white/5 backdrop-blur-lg border border-white/10;
+@layer base {
+
+    /* ---- Light tokens (brand-locked) ---- */
+    :root {
+        --paper: 243 243 238;
+        --paper-soft: 251 251 248;
+        --surface: 255 255 255;
+        --ink: 21 23 28;
+        --ink-soft: 106 110 118;
+        --ink-faint: 154 157 163;
+        --line: 226 227 221;
+        --line-strong: 200 202 194;
+        --signal: 30 60 255;
+        /* #1E3CFF brand DEV accent */
+        --signal-ink: 23 48 214;
+        --alert: 229 52 31;
+        /* #E5341F brand SEC accent */
+        --alert-ink: 196 44 24;
+        color-scheme: light;
     }
 
-    .gradient-text {
-        @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-primary-600;
+    /* ---- Dark tokens (accents kept saturated, lifted for contrast) ---- */
+    .dark {
+        --paper: 16 18 22;
+        --paper-soft: 22 24 29;
+        --surface: 28 31 37;
+        --ink: 237 238 235;
+        --ink-soft: 158 162 170;
+        --ink-faint: 110 114 122;
+        --line: 42 45 52;
+        --line-strong: 60 64 73;
+        --signal: 122 144 255;
+        --signal-ink: 158 175 255;
+        --alert: 255 105 90;
+        --alert-ink: 255 140 128;
+        color-scheme: dark;
     }
 
-    .text-glow {
-        text-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-paper text-ink font-sans antialiased;
+        font-feature-settings: "ss01", "cv01";
+        overflow-x: hidden;
+    }
+
+    /* Theme cross-fade */
+    body,
+    .sheet,
+    nav {
+        transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+    }
+
+    ::selection {
+        background: rgb(var(--signal) / 0.18);
+        color: rgb(var(--ink));
+    }
+
+    :focus-visible {
+        outline: 2px solid rgb(var(--signal));
+        outline-offset: 2px;
+        border-radius: 2px;
     }
 }
 
-body {
-    @apply bg-dark-950 text-white selection:bg-primary-500/30 overflow-x-hidden;
+@layer components {
+
+    /* Mono utility label, used for real labels not decorative eyebrows */
+    .label {
+        @apply font-mono uppercase tracking-label text-ink-soft;
+        font-size: 11px;
+    }
+
+    /* Datasheet surface card */
+    .sheet {
+        @apply bg-surface border border-line;
+    }
 }
 
+/* Scrollbar tuned to the active theme */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    @apply bg-dark-950;
+    background: rgb(var(--paper));
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-dark-700 rounded-full hover:bg-dark-600;
+    background: rgb(var(--line-strong));
+    border: 2px solid rgb(var(--paper));
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--ink-faint));
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
 }

@@ -1,80 +1,78 @@
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Award, ExternalLink, Calendar, ArrowUpRight } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { certifications } from '../data/certifications';
-import Marquee from './Marquee';
+import SectionHeader from './SectionHeader';
 
-function CertificationItem({ cert, index }) {
+const isSecurity = (cert) => /security|penetration|cyber/i.test(`${cert.name} ${cert.description}`);
+const EASE = [0.16, 1, 0.3, 1];
+
+function CredentialRow({ cert, index, reduce }) {
+    const sec = isSecurity(cert);
+    const accent = sec ? 'text-alert' : 'text-signal';
+    const dateLabel = new Date(cert.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' }).toUpperCase();
+
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
+        <motion.a
+            href={cert.credentialUrl || undefined}
+            target={cert.credentialUrl ? '_blank' : undefined}
+            rel="noopener noreferrer"
+            initial={reduce ? false : { opacity: 0, y: 22 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="group flex flex-col md:flex-row gap-6 p-6 border-b border-white/5 hover:bg-white/5 transition-colors duration-300 rounded-lg"
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, delay: index * 0.08, ease: EASE }}
+            className="group sheet block px-5 py-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-ink"
         >
-            {/* Date - Left Column on Desktop */}
-            <div className="md:w-32 flex-shrink-0 pt-1">
-                <span className="text-sm font-mono text-dark-400 flex items-center gap-2 group-hover:text-primary-400 transition-colors">
-                    <Calendar size={14} />
-                    {new Date(cert.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
-                </span>
-            </div>
-
-            {/* Main Content */}
-            <div className="flex-grow">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <h3 className="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-primary-400 transition-colors">
-                            {cert.name}
-                        </h3>
-                        <p className="text-primary-300 font-medium flex items-center gap-2 mb-3">
-                            <Award size={16} />
-                            {cert.issuer}
-                        </p>
-                    </div>
-
-                    {cert.credentialUrl && (
-                        <a
-                            href={cert.credentialUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hidden md:flex items-center justify-center w-10 h-10 rounded-full border border-white/10 text-white hover:bg-white hover:text-dark-950 transition-all transform group-hover:rotate-45"
-                        >
-                            <ArrowUpRight size={20} />
-                        </a>
-                    )}
+            <div className="flex items-start gap-4">
+                <div className="hidden sm:flex flex-col gap-2 w-36 shrink-0 pt-0.5">
+                    <span className="font-mono text-[11px] text-ink-faint">CERT-{String(cert.id).padStart(2, '0')}</span>
+                    <span className={`inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider ${accent}`}>
+                        <ShieldCheck size={13} /> Verified
+                    </span>
+                    <span className="label !text-ink-faint">{dateLabel}</span>
                 </div>
 
-                <p className="text-dark-300 text-sm leading-relaxed max-w-2xl">
-                    {cert.description}
-                </p>
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                        <h3 className="font-display font-bold text-lg md:text-xl text-ink leading-snug group-hover:text-signal transition-colors">
+                            {cert.name}
+                        </h3>
+                        {cert.credentialUrl && (
+                            <span className="w-8 h-8 shrink-0 flex items-center justify-center border border-line text-ink-soft group-hover:bg-ink group-hover:text-paper group-hover:border-ink transition-all">
+                                <ArrowUpRight size={16} />
+                            </span>
+                        )}
+                    </div>
 
-                {/* Mobile Link */}
-                {cert.credentialUrl && (
-                    <a
-                        href={cert.credentialUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="md:hidden mt-4 inline-flex items-center gap-2 text-sm font-medium text-white hover:text-primary-400 transition-colors"
-                    >
-                        View Credential <ArrowUpRight size={14} />
-                    </a>
-                )}
+                    <p className="mt-1 font-mono text-[12px] uppercase tracking-wider text-ink-soft">{cert.issuer}</p>
+                    <p className="mt-3 text-[13.5px] text-ink-soft leading-relaxed max-w-2xl">{cert.description}</p>
+
+                    <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 sm:hidden">
+                        <span className="label !text-ink-faint">{dateLabel}</span>
+                        <span className={`inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider ${accent}`}>
+                            <ShieldCheck size={12} /> Verified
+                        </span>
+                    </div>
+
+                    {cert.credentialId && (
+                        <p className="mt-3 font-mono text-[11px] text-ink-faint">
+                            <span className="text-ink-soft">ID</span> · {cert.credentialId}
+                        </p>
+                    )}
+                </div>
             </div>
-        </motion.div>
+        </motion.a>
     );
 }
 
 export default function Certifications() {
+    const reduce = useReducedMotion();
     return (
-        <section id="certifications" className="min-h-screen py-20 bg-transparent">
-            <Marquee text="CERTIFICATIONS • ACHIEVEMENTS • " direction="right" />
-
-            <div className="max-w-5xl mx-auto px-4 md:px-8 mt-10">
-                <div className="space-y-2">
+        <section id="credentials" className="py-16 md:py-24">
+            <div className="max-w-frame mx-auto px-5 md:px-10">
+                <SectionHeader title="Credentials" meta={`${certifications.length} verified`} />
+                <div className="grid gap-4">
                     {certifications.map((cert, index) => (
-                        <CertificationItem key={cert.id} cert={cert} index={index} />
+                        <CredentialRow key={cert.id} cert={cert} index={index} reduce={reduce} />
                     ))}
                 </div>
             </div>

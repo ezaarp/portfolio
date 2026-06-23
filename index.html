@@ -3,11 +3,74 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Andrarieza Rizqi Pradana · Full-Stack Developer</title>
     <meta name="description"
-        content="Portfolio showcasing web development projects, certifications, and technical skills" />
-    <title>Andrarieza | Portfolio</title>
+        content="Andrarieza Rizqi Pradana is a full-stack developer based in Bandung, Indonesia. See selected work, verified credentials, and get in touch." />
+
+    <link rel="canonical" href="https://andrarieza.vercel.app/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://andrarieza.vercel.app/" />
+    <meta property="og:title" content="Andrarieza Rizqi Pradana · Full-Stack Developer" />
+    <meta property="og:description"
+        content="Full-stack developer based in Bandung, Indonesia. Selected work, verified credentials, and contact." />
+    <meta property="og:image" content="https://andrarieza.vercel.app/og.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Andrarieza Rizqi Pradana · Full-Stack Developer" />
+    <meta name="twitter:description"
+        content="Full-stack developer based in Bandung, Indonesia." />
+    <meta name="twitter:image" content="https://andrarieza.vercel.app/og.png" />
+
+    <!-- Theme color per scheme -->
+    <meta name="theme-color" content="#F3F3EE" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)" />
+
+    <!-- No-flash theme bootstrap: set .dark before first paint -->
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('theme');
+                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (saved === 'dark' || (!saved && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+
+    <!-- Person structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Andrarieza Rizqi Pradana",
+        "alternateName": "Eza",
+        "jobTitle": "Full-Stack Developer",
+        "url": "https://andrarieza.vercel.app/",
+        "sameAs": [
+            "https://github.com/ezaarp",
+            "https://www.linkedin.com/in/andrariezarizqip/",
+            "https://www.instagram.com/ezaarp/"
+        ],
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Bandung",
+            "addressCountry": "ID"
+        }
+    }
+    </script>
 </head>
 
 <body>

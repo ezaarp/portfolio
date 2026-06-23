@@ -1,166 +1,110 @@
 import { motion } from 'framer-motion';
-import { Mail, Github, Linkedin, Send, Instagram } from 'lucide-react';
-import Marquee from './Marquee';
+import { Mail, Github, Linkedin, Instagram, ArrowUpRight, Send, Download } from 'lucide-react';
+import SectionHeader from './SectionHeader';
+
+const RESUME_HREF = '/CV_Andrarieza%20Rizqi%20Pradana.pdf'; // drop the résumé at public/
+
+const channels = [
+    { k: 'EMAIL', label: 'andrariezarizqip@gmail.com', href: 'mailto:andrariezarizqip@gmail.com', icon: Mail },
+    { k: 'GITHUB', label: 'github.com/ezaarp', href: 'https://github.com/ezaarp', icon: Github },
+    { k: 'LINKEDIN', label: 'in/andrariezarizqip', href: 'https://www.linkedin.com/in/andrariezarizqip/', icon: Linkedin },
+    { k: 'INSTAGRAM', label: '@ezaarp', href: 'https://www.instagram.com/ezaarp/', icon: Instagram },
+];
+
+function ContactChannel({ k, label, href, icon: Icon }) {
+    return (
+        <a href={href} target="_blank" rel="noopener noreferrer"
+            className="group flex items-center gap-4 border-b border-line py-4 -mx-2 px-2 transition-colors hover:bg-paper-soft">
+            <span className="font-mono text-[11px] text-ink-faint w-20 shrink-0">{k}</span>
+            <Icon size={16} className="text-ink-soft group-hover:text-signal transition-colors shrink-0" />
+            <span className="flex-1 font-mono text-[13px] text-ink truncate">{label}</span>
+            <ArrowUpRight size={15} className="text-ink-faint group-hover:text-ink group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all" />
+        </a>
+    );
+}
 
 export default function Contact() {
+    const inputClass =
+        'w-full bg-paper-soft border border-line px-3.5 py-2.5 text-ink text-sm placeholder:text-ink-soft focus:border-signal focus:bg-surface focus:outline-none transition-colors';
+
     return (
-        <section
-            id="contact"
-            className="min-h-screen py-20 bg-dark-950 flex flex-col justify-center overflow-hidden"
-        >
-            <Marquee text="GET IN TOUCH • LET'S CONNECT • " direction="right" />
+        <section id="contact" className="py-16 md:py-24">
+            <div className="max-w-frame mx-auto px-5 md:px-10">
+                <SectionHeader title="Contact" meta="Open to opportunities" />
 
-            <div className="px-4 md:px-8 max-w-4xl mx-auto w-full">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
-                >
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                        Get In <span className="gradient-text">Touch</span>
-                    </h2>
-                    <p className="text-dark-300 text-lg max-w-2xl mx-auto">
-                        Have a project in mind or want to collaborate? Feel free to reach out!
-                    </p>
-                </motion.div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                    {/* Contact Info */}
+                <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+                    {/* left: pitch + channels */}
                     <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{ duration: 0.5 }}
+                        className="lg:col-span-6"
                     >
-                        <h3 className="text-2xl font-bold mb-6">Let's Connect</h3>
+                        <p className="font-display font-bold text-2xl md:text-3xl text-ink leading-tight tracking-tight max-w-md">
+                            Have something to build, or something that needs auditing?
+                        </p>
+                        <p className="mt-4 text-ink-soft leading-relaxed max-w-md">
+                            Available for internships, freelance builds, and security reviews.
+                            Grab my CV or pick whichever channel suits you.
+                        </p>
 
-                        <div className="space-y-4 mb-8">
-                            <a
-                                href="mailto:andrariezarizqip@gmail.com"
-                                className="flex items-center gap-4 glass p-4 rounded-lg hover:border-primary-500 transition-all group"
-                            >
-                                <div className="w-12 h-12 bg-primary-500/20 rounded-lg flex items-center justify-center group-hover:bg-primary-500/30 transition-colors">
-                                    <Mail className="text-primary-400" size={24} />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-dark-400">Email</p>
-                                    <p className="font-medium group-hover:text-primary-400 transition-colors">
-                                        andrariezarizqip@gmail.com
-                                    </p>
-                                </div>
-                            </a>
-                        </div>
+                        <a href={RESUME_HREF} target="_blank" rel="noopener noreferrer"
+                            className="group mt-6 inline-flex items-center gap-2 bg-ink text-paper px-5 py-3 font-mono text-[13px] uppercase tracking-wider hover:bg-signal transition-colors active:translate-y-px">
+                            <Download size={15} /> Download CV
+                        </a>
 
-                        <div className="flex gap-4">
-                            <a
-                                href="https://github.com/ezaarp"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-12 h-12 glass rounded-lg flex items-center justify-center hover:border-primary-500 hover:bg-primary-500/10 transition-all"
-                            >
-                                <Github size={24} />
-                            </a>
-                            <a
-                                href="https://www.linkedin.com/in/andrariezarizqip/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-12 h-12 glass rounded-lg flex items-center justify-center hover:border-primary-500 hover:bg-primary-500/10 transition-all"
-                            >
-                                <Linkedin size={24} />
-                            </a>
-                            <a
-                                href="https://www.instagram.com/ezaarp/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-12 h-12 glass rounded-lg flex items-center justify-center hover:border-primary-500 hover:bg-primary-500/10 transition-all"
-                            >
-                                <Instagram size={24} />
-                            </a>
+                        <div className="mt-8">
+                            {channels.map((c) => <ContactChannel key={c.k} {...c} />)}
                         </div>
                     </motion.div>
 
-                    {/* Contact Form */}
+                    {/* right: form */}
                     <motion.div
-                        initial={{ opacity: 0, x: 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="glass p-8 rounded-xl"
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        className="lg:col-span-6"
                     >
-                        <form className="space-y-4" onSubmit={(e) => {
-                            e.preventDefault();
-                            const name = e.target.name.value;
-                            const message = e.target.message.value;
-                            const mailtoLink = `mailto:andrariezarizqip@gmail.com?subject=Portfolio Contact from ${name}&body=${encodeURIComponent(message)}`;
-                            window.location.href = mailtoLink;
-                        }}>
-                            <div>
-                                <label htmlFor="name" className="block text-sm font-medium mb-2">
-                                    Name
-                                </label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    required
-                                    className="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg focus:border-primary-500 focus:outline-none transition-colors"
-                                    placeholder="Your Name"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium mb-2">
-                                    Email
-                                </label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    required
-                                    className="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg focus:border-primary-500 focus:outline-none transition-colors"
-                                    placeholder="your.  email@example.com"
-                                />
-                            </div>
-
-                            <div>
-                                <label htmlFor="message" className="block text-sm font-medium mb-2">
-                                    Message
-                                </label>
-                                <textarea
-                                    id="message"
-                                    name="message"
-                                    required
-                                    rows="5"
-                                    className="w-full px-4 py-3 bg-dark-800 border border-dark-700 rounded-lg focus:border-primary-500 focus:outline-none transition-colors resize-none"
-                                    placeholder="Your message..."
-                                ></textarea>
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="w-full px-6 py-3 bg-primary-500 hover:bg-primary-600 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all hover:scale-105"
+                        <div className="sheet p-6">
+                            <span className="label">Direct message</span>
+                            <form
+                                className="mt-5 space-y-4"
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    const name = e.target.name.value;
+                                    const message = e.target.message.value;
+                                    window.location.href =
+                                        `mailto:andrariezarizqip@gmail.com?subject=${encodeURIComponent(`Portfolio contact from ${name}`)}&body=${encodeURIComponent(message)}`;
+                                }}
                             >
-                                <Send size={18} />
-                                Send Message
-                            </button>
-                        </form>
+                                <div>
+                                    <label htmlFor="name" className="label block mb-1.5">Name</label>
+                                    <input id="name" name="name" type="text" required placeholder="Your name" className={inputClass} />
+                                </div>
+                                <div>
+                                    <label htmlFor="email" className="label block mb-1.5">Email</label>
+                                    <input id="email" name="email" type="email" required placeholder="you@example.com" className={inputClass} />
+                                </div>
+                                <div>
+                                    <label htmlFor="message" className="label block mb-1.5">Message</label>
+                                    <textarea id="message" name="message" rows="4" required placeholder="What are you working on?" className={`${inputClass} resize-none`} />
+                                </div>
+                                <button type="submit"
+                                    className="group w-full flex items-center justify-center gap-2 bg-signal text-paper px-5 py-3 font-mono text-[13px] uppercase tracking-wider hover:bg-signal-ink transition-colors active:translate-y-px">
+                                    <Send size={15} /> Send message
+                                </button>
+                            </form>
+                        </div>
                     </motion.div>
                 </div>
 
-                {/* Footer */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className="text-center mt-16 pt-8 border-t border-dark-800"
-                >
-                    <p className="text-dark-400">
-                        © 2026 Andrarieza Rizqi Pradana
-                    </p>
-                </motion.div>
+                {/* footer (legal © preserved) */}
+                <footer className="mt-20 pt-6 border-t border-line-strong flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <span className="label">© {new Date().getFullYear()} Andrarieza Rizqi Pradana</span>
+                    <span className="label">Bandung, Indonesia</span>
+                </footer>
             </div>
         </section>
     );

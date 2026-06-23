@@ -1,215 +1,190 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Terminal, Code, Shield, ChevronRight, Activity, Wifi, Server } from 'lucide-react';
+import { useRef, useState, useEffect, lazy, Suspense } from 'react';
+import { motion, AnimatePresence, useReducedMotion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 import meImg from '../assets/me.png';
+import useMediaQuery from '../hooks/useMediaQuery';
+import Marquee from './Marquee';
 
-const Typewriter = ({ text, delay = 30, onComplete }) => {
-    const [currentText, setCurrentText] = useState('');
-    const [currentIndex, setCurrentIndex] = useState(0);
+// Three.js + physics is heavy; code-split it and only mount on desktop.
+const IdBadge = lazy(() => import('./IdBadge'));
+
+const SPEC_ROWS = [
+    { k: 'ROLE_01', v: 'Full-Stack Developer', tag: 'DEV' },
+    { k: 'ROLE_02', v: 'Frontend Engineer', tag: 'DEV' },
+    { k: 'BASED', v: 'Bandung, ID · UTC+7' },
+];
+
+const TICKER = ['Full-Stack Developer', 'React', 'TypeScript', 'Node.js', 'Three.js', 'Tailwind', 'Web Developer', 'Bandung, Indonesia', 'Open to opportunities'];
+
+const EASE = [0.16, 1, 0.3, 1];
+
+export default function Hero({ onNavigate = () => { } }) {
+    const reduce = useReducedMotion();
+    const isDesktop = useMediaQuery('(min-width: 1024px)');
+    const cardRef = useRef(null);
+    const [phase, setPhase] = useState(reduce ? 'main' : 'hi');
 
     useEffect(() => {
-        if (currentIndex < text.length) {
-            const timeout = setTimeout(() => {
-                setCurrentText(prev => prev + text[currentIndex]);
-                setCurrentIndex(prev => prev + 1);
-            }, delay);
-            return () => clearTimeout(timeout);
-        } else if (onComplete) {
-            onComplete();
-        }
-    }, [currentIndex, delay, text, onComplete]);
+        if (reduce) return;
+        const t1 = setTimeout(() => setPhase('name'), 1300);
+        const t2 = setTimeout(() => setPhase('main'), 3300);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+    }, [reduce]);
 
-    return <span>{currentText}</span>;
-};
+    // Pointer tilt on the static portrait card (motion values, never state)
+    const mx = useMotionValue(0);
+    const my = useMotionValue(0);
+    const rotX = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), { stiffness: 150, damping: 18 });
+    const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-6, 6]), { stiffness: 150, damping: 18 });
+    const onMove = (e) => {
+        if (reduce || !cardRef.current) return;
+        const r = cardRef.current.getBoundingClientRect();
+        mx.set((e.clientX - r.left) / r.width - 0.5);
+        my.set((e.clientY - r.top) / r.height - 0.5);
+    };
+    const onLeave = () => { mx.set(0); my.set(0); };
 
-const CommandPrompt = ({ children }) => (
-    <div className="flex items-center gap-2 text-green-400 font-mono text-base md:text-lg mb-3">
-        <ChevronRight size={20} />
-        <span className="text-blue-400">~</span>
-        <span>{children}</span>
-    </div>
-);
-
-export default function Hero() {
-    const [step, setStep] = useState(0);
+    const showBadge = isDesktop && !reduce;
+    const lineV = {
+        hidden: { opacity: 0, y: 26 },
+        show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
+    };
 
     return (
-        // Changed min-h-screen to h-screen and ensured overflow-hidden to crop bottom of image
-        <section id="home" className="h-screen pt-32 pb-20 flex items-center bg-transparent relative overflow-hidden px-4 md:px-12">
+        <section id="home" className="relative isolate h-full overflow-hidden">
+            {/* The ID badge appears once the story begins */}
+            {showBadge && phase === 'main' && (
+                <Suspense fallback={null}>
+                    <motion.div
+                        data-badge className="absolute inset-0 z-40 hidden lg:block" aria-hidden="true"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9, delay: 0.3 }}
+                    >
+                        <IdBadge />
+                    </motion.div>
+                </Suspense>
+            )}
 
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                {/* MatrixRain removed from here, now global in App.jsx */}
+            <AnimatePresence mode="wait">
+                {phase === 'hi' && (
+                    <motion.div
+                        key="hi" className="absolute inset-0 flex items-center justify-center px-6"
+                        exit={{ opacity: 0, y: -28, transition: { duration: 0.4, ease: EASE } }}
+                    >
+                        <motion.h1
+                            initial={{ opacity: 0, scale: 0.7, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ type: 'spring', stiffness: 200, damping: 11 }}
+                            className="font-display font-black text-ink tracking-tight leading-none text-[clamp(4rem,17vw,12rem)]"
+                        >
+                            Hi<span className="text-signal">!</span>
+                        </motion.h1>
+                    </motion.div>
+                )}
 
-                <div className="absolute top-24 left-8 text-xs font-mono text-primary-400/50 hidden md:block z-10">
-                    <div className="flex items-center gap-2 mb-2"><Activity size={14} /> SYSTEM STATUS: ONLINE</div>
-                    <div className="flex items-center gap-2 mb-2"><Server size={14} /> SERVER: ap-southeast-3</div>
-                    <div className="flex items-center gap-2"><Wifi size={14} /> CONNECTED: 104.23.1.22</div>
-                </div>
+                {phase === 'name' && (
+                    <motion.div
+                        key="name" className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center"
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, scale: 1.06, filter: 'blur(6px)', transition: { duration: 0.45, ease: EASE } }}
+                    >
+                        <motion.span initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="font-mono uppercase tracking-widest text-ink-soft mb-4 text-sm md:text-base">
+                            My name is
+                        </motion.span>
+                        <motion.h1
+                            initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 16, delay: 0.15 }}
+                            className="font-display font-black text-ink tracking-tight leading-[0.92] text-[clamp(2.6rem,9vw,6rem)]"
+                        >
+                            Andrarieza<br />Rizqi Pradana
+                        </motion.h1>
+                    </motion.div>
+                )}
 
-                <div className="absolute top-24 right-8 text-xs font-mono text-primary-400/50 hidden md:block text-right z-10">
-                    <div className="mb-2">ENCRYPTION: AES-256</div>
-                    <div className="mb-2">SECURE SHELL (SSH)</div>
-                    <div>SESSION ID: #88291F</div>
-                </div>
+                {phase === 'main' && (
+                    <motion.div key="main" className="relative z-10 h-full max-w-frame mx-auto px-5 md:px-10 flex items-center" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }}>
+                        <div className="grid lg:grid-cols-12 gap-10 w-full items-center">
+                            <motion.div
+                                className="lg:col-span-7 order-2 lg:order-1"
+                                initial={reduce ? false : 'hidden'} animate="show"
+                                variants={{ show: { transition: { staggerChildren: 0.16, delayChildren: 0.1 } } }}
+                            >
+                                <motion.div variants={lineV} className="flex items-center gap-3 mb-6">
+                                    <span className="label whitespace-nowrap">Full-Stack Developer · Bandung, ID</span>
+                                    <span className="h-px flex-1 bg-line-strong" />
+                                </motion.div>
 
-                <div className="absolute bottom-8 left-8 text-xs font-mono text-primary-400/50 hidden md:block z-10">
-                    <div className="w-32 h-1 bg-dark-800 rounded-full overflow-hidden">
-                        <motion.div
-                            className="h-full bg-primary-500"
-                            animate={{ width: ["0%", "100%"] }}
-                            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-                        />
-                    </div>
-                    <div className="mt-1">SCANNING PORTS...</div>
-                </div>
-            </div>
+                                <motion.h1 variants={lineV} className="font-display font-black text-ink leading-[0.95] tracking-tight text-[clamp(2.6rem,6vw,4.4rem)]">
+                                    Andrarieza<br />Rizqi Pradana
+                                </motion.h1>
 
-            <div className="w-full max-w-[1500px] mx-auto flex flex-col lg:flex-row items-center relative z-10">
+                                <motion.p variants={lineV} className="mt-6 max-w-md text-ink-soft text-base md:text-lg leading-relaxed">
+                                    I design and build web applications end to end, from interface to deployment.
+                                    Currently studying at Telkom University.
+                                </motion.p>
 
-                {/* Left Column: Terminal */}
-                <motion.div
-                    initial={{ opacity: 0, x: 0 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="w-full lg:w-[50%] ml-0 lg:ml-20 h-[80vh] md:h-[600px] lg:h-[800px] flex items-center relative z-40"
-                >
-                    <div className="w-full bg-[#0c0c0c]/90 backdrop-blur-md rounded-xl border border-dark-700 shadow-2xl font-mono text-sm md:text-base leading-relaxed relative overflow-hidden h-full flex flex-col">
-
-                        <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none opacity-5"></div>
-
-                        <div className="bg-dark-800/90 px-6 py-3 flex items-center justify-between border-b border-dark-700 shrink-0">
-                            <div className="flex items-center gap-2">
-                                <div className="w-3.5 h-3.5 rounded-full bg-red-500"></div>
-                                <div className="w-3.5 h-3.5 rounded-full bg-yellow-500"></div>
-                                <div className="w-3.5 h-3.5 rounded-full bg-green-500"></div>
-                            </div>
-                            <div className="flex items-center gap-2 text-dark-400 text-sm select-none">
-                                <Terminal size={16} />
-                                <span>bash — andrarieza@portfolio</span>
-                            </div>
-                            <div className="w-16"></div>
-                        </div>
-
-                        <div className="p-6 md:p-8 text-dark-300 font-mono relative flex-grow overflow-y-auto lg:overflow-hidden">
-                            <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-20 bg-[length:100%_2px,3px_100%] pointer-events-none opacity-20"></div>
-
-                            <div className="mb-6">
-                                <span>Last login: {new Date().toDateString()} on ttys000</span>
-                            </div>
-
-                            <div className="mb-8">
-                                <CommandPrompt>
-                                    <Typewriter text="whoami" onComplete={() => setTimeout(() => setStep(1), 500)} />
-                                </CommandPrompt>
-                                {step >= 1 && (
-                                    <motion.div
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="pl-8 text-white font-bold text-2xl md:text-3xl mb-4"
+                                <motion.div variants={lineV} className="mt-9 flex flex-wrap items-center gap-3">
+                                    <button
+                                        onClick={() => onNavigate('works')}
+                                        className="group inline-flex items-center gap-2 bg-ink text-paper px-6 py-3.5 font-mono text-[13px] uppercase tracking-wider cursor-pointer transition-colors hover:bg-signal active:translate-y-px"
                                     >
-                                        <span className="text-green-400">root</span>@<span className="text-primary-400">Andrarieza</span>
+                                        See my works
+                                        <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                                    </button>
+                                    <button
+                                        onClick={() => onNavigate('contact')}
+                                        className="group inline-flex items-center gap-2 border border-line-strong bg-surface text-ink px-5 py-3.5 font-mono text-[13px] uppercase tracking-wider cursor-pointer transition-colors hover:border-ink active:translate-y-px"
+                                    >
+                                        Get in touch
+                                        <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
+                                    </button>
+                                </motion.div>
+                            </motion.div>
+
+                            {/* Mobile / reduced-motion static credential card */}
+                            <div className="lg:col-span-5 order-1 lg:order-2 [perspective:1200px] flex items-center">
+                                {!showBadge && (
+                                    <motion.div
+                                        ref={cardRef}
+                                        onMouseMove={onMove}
+                                        onMouseLeave={onLeave}
+                                        style={{ rotateX: rotX, rotateY: rotY, transformStyle: 'preserve-3d' }}
+                                        initial={{ opacity: 0, scale: 0.97 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.6, ease: EASE }}
+                                        className="sheet relative z-10"
+                                    >
+                                        <div className="bg-paper-soft border-b border-line overflow-hidden">
+                                            <img src={meImg} alt="Andrarieza Rizqi Pradana" className="w-full h-[300px] sm:h-[360px] object-contain object-bottom" />
+                                        </div>
+                                        <div className="p-4 sm:p-5 font-mono text-[12px] sm:text-[13px]">
+                                            {SPEC_ROWS.map((row) => (
+                                                <div key={row.k} className="flex items-center gap-3 py-1.5 border-b border-line/60 last:border-0">
+                                                    <span className="text-ink-faint w-[68px] shrink-0">{row.k}</span>
+                                                    <span className="text-ink flex-1 truncate">{row.v}</span>
+                                                    {row.tag && <span className="shrink-0 px-1.5 py-0.5 text-[10px] tracking-wider border text-signal border-signal/40">{row.tag}</span>}
+                                                </div>
+                                            ))}
+                                            <div className="flex items-center gap-2 pt-3">
+                                                <span className="text-ink-faint">STATUS</span>
+                                                <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse-dot" />
+                                                <span className="text-ink">Open to opportunities</span>
+                                            </div>
+                                        </div>
                                     </motion.div>
                                 )}
                             </div>
-
-                            {step >= 1 && (
-                                <div className="mb-8">
-                                    <CommandPrompt>
-                                        <Typewriter text="cat ./role.txt" onComplete={() => setTimeout(() => setStep(2), 500)} />
-                                    </CommandPrompt>
-                                    {step >= 2 && (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className="pl-8 space-y-2"
-                                        >
-                                            <div className="flex items-center gap-3 text-primary-400">
-                                                <Shield size={20} /> Cyber Security Analyst
-                                            </div>
-                                            <div className="flex items-center gap-3 text-purple-400">
-                                                <Code size={20} /> Full Stack Web Developer
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </div>
-                            )}
-
-                            {step >= 2 && (
-                                <div className="mb-8">
-                                    <CommandPrompt>
-                                        <Typewriter text="echo $BIO" onComplete={() => setTimeout(() => setStep(3), 500)} />
-                                    </CommandPrompt>
-                                    {step >= 3 && (
-                                        <motion.div
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className="pl-8 text-dark-300 max-w-2xl leading-relaxed"
-                                        >
-                                            "Passionate about securing digital infrastructures and building robust, scalable web applications. Turning complex problems into elegant code."
-                                        </motion.div>
-                                    )}
-                                </div>
-                            )}
-
-                            {step >= 3 && (
-                                <div className="mb-8">
-                                    <CommandPrompt>
-                                        <Typewriter text="./init_portfolio.sh --verbose" onComplete={() => setTimeout(() => setStep(4), 500)} />
-                                    </CommandPrompt>
-                                    {step >= 4 && (
-                                        <div className="pl-8 space-y-1">
-                                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-green-500">
-                                                [OK] Loading modules...
-                                            </motion.div>
-                                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="text-green-500">
-                                                [OK] Initializing Projects...
-                                            </motion.div>
-                                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="text-green-500">
-                                                [OK] Loading Certifications...
-                                            </motion.div>
-                                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="text-blue-400 mt-2">
-                                                Ready! Scroll down to explore.
-                                            </motion.div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-
-                            {step >= 4 && (
-                                <div className="mt-6 flex items-center gap-2">
-                                    <ChevronRight size={20} className="text-green-400" />
-                                    <span className="text-blue-400">~</span>
-                                    <motion.span
-                                        animate={{ opacity: [0, 1, 0] }}
-                                        transition={{ repeat: Infinity, duration: 0.8 }}
-                                        className="w-3 h-6 bg-dark-400 block"
-                                    ></motion.span>
-                                </div>
-                            )}
                         </div>
-                    </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Running text along the bottom of the landing */}
+            {phase === 'main' && (
+                <motion.div
+                    className="absolute bottom-0 inset-x-0 z-50"
+                    initial={reduce ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}
+                >
+                    <Marquee items={TICKER} speed={42} />
                 </motion.div>
-
-                {/* Right Column: Image Background Overlay */}
-                <div className="absolute right-0 top-0 bottom-0 w-[45%] hidden lg:flex items-end justify-end pointer-events-none z-30">
-
-                    <div className="relative w-full h-[130%]" style={{ marginRight: '-50px', bottom: '-150px' }}>
-
-
-                        <motion.img
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 0.7 }}
-                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
-                            src={meImg}
-                            alt="Andrarieza"
-                            className="w-full h-full object-contain object-bottom filter grayscale contrast-125 scale-105 origin-bottom-right"
-                        />
-                        {/* Gradient Fade at Bottom to hide crop */}
-                        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-dark-950 via-dark-950/80 to-transparent z-40 pointer-events-none"></div>
-                    </div>
-                </div>
-
-            </div>
+            )}
         </section>
     );
 }

@@ -1,77 +1,67 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class',
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
         extend: {
+            // Colors resolve from CSS variables (channels) so every utility is
+            // dual-mode aware automatically. Light brand values are locked in
+            // index.css :root; dark variants live under .dark.
             colors: {
-                primary: {
-                    50: '#f0f9ff',
-                    100: '#e0f2fe',
-                    200: '#bae6fd',
-                    300: '#7dd3fc',
-                    400: '#38bdf8',
-                    500: '#0ea5e9',
-                    600: '#0284c7',
-                    700: '#0369a1',
-                    800: '#075985',
-                    900: '#0c4a6e',
+                paper: {
+                    DEFAULT: 'rgb(var(--paper) / <alpha-value>)',
+                    soft: 'rgb(var(--paper-soft) / <alpha-value>)',
                 },
-                dark: {
-                    50: '#f8fafc',
-                    100: '#f1f5f9',
-                    200: '#e2e8f0',
-                    300: '#cbd5e1',
-                    400: '#94a3b8',
-                    500: '#64748b',
-                    600: '#475569',
-                    700: '#334155',
-                    800: '#1e293b',
-                    900: '#0f172a', /* Old Slate 900 */
-                    950: '#020617', /* Modern Slate/Black */
-                }
+                surface: 'rgb(var(--surface) / <alpha-value>)',
+                ink: {
+                    DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+                    soft: 'rgb(var(--ink-soft) / <alpha-value>)',
+                    faint: 'rgb(var(--ink-faint) / <alpha-value>)',
+                },
+                line: {
+                    DEFAULT: 'rgb(var(--line) / <alpha-value>)',
+                    strong: 'rgb(var(--line-strong) / <alpha-value>)',
+                },
+                signal: {           // DEV channel — things he builds
+                    DEFAULT: 'rgb(var(--signal) / <alpha-value>)',
+                    ink: 'rgb(var(--signal-ink) / <alpha-value>)',
+                },
+                alert: {            // SEC channel — things he secures (used rarely)
+                    DEFAULT: 'rgb(var(--alert) / <alpha-value>)',
+                    ink: 'rgb(var(--alert-ink) / <alpha-value>)',
+                },
             },
-            animation: {
-                'float': 'float 6s ease-in-out infinite',
-                'slide-up': 'slideUp 0.6s ease-out',
-                'slide-down': 'slideDown 0.6s ease-out',
-                'fade-in': 'fadeIn 0.6s ease-out',
-                'scale-in': 'scaleIn 0.5s ease-out',
-                'gradient-xy': 'gradient-xy 15s ease infinite',
+            fontFamily: {
+                display: ['Archivo', 'system-ui', 'sans-serif'],
+                sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
+                mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
+            },
+            letterSpacing: {
+                label: '0.18em',
+            },
+            maxWidth: {
+                frame: '1240px',
             },
             keyframes: {
-                float: {
-                    '0%, 100%': { transform: 'translateY(0px)' },
-                    '50%': { transform: 'translateY(-20px)' },
+                'pulse-dot': {
+                    '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                    '50%': { opacity: '0.35', transform: 'scale(0.85)' },
                 },
-                slideUp: {
-                    '0%': { transform: 'translateY(100px)', opacity: '0' },
-                    '100%': { transform: 'translateY(0)', opacity: '1' },
+                'caret': {
+                    '0%, 49%': { opacity: '1' },
+                    '50%, 100%': { opacity: '0' },
                 },
-                slideDown: {
-                    '0%': { transform: 'translateY(-100px)', opacity: '0' },
-                    '100%': { transform: 'translateY(0)', opacity: '1' },
+                'shimmer': {
+                    '100%': { transform: 'translateX(100%)' },
                 },
-                fadeIn: {
-                    '0%': { opacity: '0' },
-                    '100%': { opacity: '1' },
-                },
-                scaleIn: {
-                    '0%': { transform: 'scale(0.9)', opacity: '0' },
-                    '100%': { transform: 'scale(1)', opacity: '1' },
-                },
-                'gradient-xy': {
-                    '0%, 100%': {
-                        'background-size': '400% 400%',
-                        'background-position': 'left center'
-                    },
-                    '50%': {
-                        'background-size': '200% 200%',
-                        'background-position': 'right center'
-                    }
-                }
+            },
+            animation: {
+                'pulse-dot': 'pulse-dot 1.8s ease-in-out infinite',
+                'caret': 'caret 1s step-end infinite',
+                'shimmer': 'shimmer 1.6s ease-in-out infinite',
             },
         },
     },
