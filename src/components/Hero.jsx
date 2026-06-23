@@ -22,14 +22,19 @@ export default function Hero({ onNavigate = () => { } }) {
     const reduce = useReducedMotion();
     const isDesktop = useMediaQuery('(min-width: 1024px)');
     const cardRef = useRef(null);
-    const [phase, setPhase] = useState(reduce ? 'main' : 'hi');
+    // Check if we already played the intro this session
+    const hasPlayed = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('introPlayed') === 'true';
+    const [phase, setPhase] = useState((reduce || hasPlayed) ? 'main' : 'hi');
 
     useEffect(() => {
-        if (reduce) return;
+        if (reduce || hasPlayed) return;
         const t1 = setTimeout(() => setPhase('name'), 1300);
-        const t2 = setTimeout(() => setPhase('main'), 3300);
+        const t2 = setTimeout(() => {
+            setPhase('main');
+            sessionStorage.setItem('introPlayed', 'true');
+        }, 3300);
         return () => { clearTimeout(t1); clearTimeout(t2); };
-    }, [reduce]);
+    }, [reduce, hasPlayed]);
 
     // Pointer tilt on the static portrait card (motion values, never state)
     const mx = useMotionValue(0);
